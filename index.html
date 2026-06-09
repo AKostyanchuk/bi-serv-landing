@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>бізнес аналітика — система управління FMCG-продажами</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#2f9e4d;--green-600:#1f7a3a;--green-700:#175f2d;
+    --mint-1:#e7f5ea;--mint-2:#f6fbf4;
+    --ink:#15281b;--ink-2:#43564a;--muted:#7d8d82;
+    --card:#fff;--line:#e4efe6;--red:#d8503c;--amber:#e09a3a;
+    --shadow-sm:0 4px 14px -8px rgba(20,60,30,.22);
+    --shadow:0 18px 44px -22px rgba(20,60,30,.28);
+    --r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--mint-2);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3{font-family:'PT Serif',Georgia,serif;line-height:1.12;letter-spacing:-.01em}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  .em{font-style:italic;color:var(--green-600)}
+  a{color:inherit;text-decoration:none}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;border-radius:999px;padding:13px 26px;border:none;cursor:pointer;transition:.2s}
+  .btn-primary{background:var(--green);color:#fff;box-shadow:0 8px 20px -8px rgba(47,158,77,.6)}
+  .btn-primary:hover{background:var(--green-600);transform:translateY(-1px)}
+  .btn-ghost{background:#fff;color:var(--green-700);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--green)}
+
+  header{position:fixed;top:0;left:0;right:0;z-index:50;transition:.25s}
+  header.scrolled{background:rgba(246,251,244,.85);backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:74px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700}
+  .logo-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#3cb85c,#1f7a3a);display:grid;place-items:center;color:#fff;font-family:'PT Serif',serif;font-weight:700;font-size:19px}
+  .logo-txt{font-family:'PT Serif',serif;font-weight:700;font-size:15px;line-height:1.05;color:var(--ink)}
+  .logo-txt span{display:block;color:var(--green-600)}
+  .nav-links{display:flex;gap:28px;font-size:15px;font-weight:500;color:var(--ink-2)}
+  .nav-links a:hover{color:var(--green-600)}
+  @media(max-width:920px){.nav-links{display:none}}
+
+  /* ---- stage hero -> dashboard ---- */
+  .stage{position:relative;height:230vh;background:radial-gradient(900px 600px at 50% -5%,#d8f0dd 0,transparent 60%),linear-gradient(180deg,#e7f5ea 0,#f6fbf4 75%)}
+  .stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(47,158,77,.12) 1px,transparent 1px);background-size:26px 26px;mask-image:linear-gradient(180deg,#000,transparent 70%);opacity:.7}
+  .sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center}
+  .hero{position:relative;z-index:5;text-align:center;max-width:800px;padding:0 24px;opacity:max(0,calc(1 - var(--p)*1.7));transform:translateY(calc(var(--p)*-46px)) scale(calc(1 - var(--p)*.04));will-change:opacity,transform}
+  .eyebrow{display:inline-block;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--green-600);background:#fff;border:1px solid var(--line);padding:7px 16px;border-radius:999px;margin-bottom:24px;box-shadow:var(--shadow-sm)}
+  .hero h1{font-size:clamp(38px,6.4vw,76px);font-weight:700}
+  .hero p{margin:24px auto 0;max-width:620px;color:var(--ink-2);font-size:clamp(16px,2vw,19px)}
+  .hero-cta{margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+  .floaters{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:max(0,calc(1 - var(--p)*1.55))}
+  .fcard{position:absolute;background:#fff;border-radius:14px;padding:14px 18px;box-shadow:var(--shadow);width:208px;transform:translate(calc(var(--tx)*var(--p)),calc(var(--ty)*var(--p))) scale(calc(1 - var(--p)*.12));will-change:transform}
+  .fcard .k-top{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:500}
+  .fcard .k-ico{width:24px;height:24px;border-radius:7px;background:var(--mint-1);display:grid;place-items:center;color:var(--green-600)}
+  .fcard .k-val{font-family:'PT Serif',serif;font-weight:700;font-size:25px;margin-top:6px}
+  .fcard .k-sub{font-size:12.5px;color:var(--muted);margin-top:3px;display:flex;gap:8px;align-items:center}
+  .delta-up{color:var(--green-600);font-weight:600}.delta-down{color:var(--red);font-weight:600}
+  .f1{top:29%;left:3%;--tx:140px;--ty:60px}.f2{top:55%;left:6%;--tx:160px;--ty:-40px}
+  .f3{top:25%;right:3%;--tx:-150px;--ty:70px}.f4{top:53%;right:5%;--tx:-150px;--ty:-30px}
+  @media(max-width:1040px){.f1,.f2,.f3,.f4{display:none}}
+
+  .dash{position:absolute;z-index:6;width:min(1080px,94vw);opacity:min(1,calc(var(--p)*2 - .35));transform:translateY(calc((1 - var(--p))*46px)) scale(calc(.9 + var(--p)*.1));filter:blur(calc((1 - var(--p))*7px));will-change:opacity,transform,filter;pointer-events:none}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+  .dash-frame{display:grid;grid-template-columns:188px 1fr;overflow:hidden;height:min(640px,80vh)}
+  .side{background:#fbfdfb;border-right:1px solid var(--line);padding:16px 12px;font-size:13.5px}
+  .side .logo{margin:4px 6px 18px;font-size:13px}.side .logo-mark{width:30px;height:30px;font-size:15px}
+  .side-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;color:var(--ink-2);font-weight:500}
+  .side-item.active{background:var(--mint-1);color:var(--green-700);font-weight:600}
+  .side-item .dot{width:7px;height:7px;border-radius:3px;background:currentColor;opacity:.55}
+  .dash-main{padding:18px 20px;overflow:hidden;display:flex;flex-direction:column;gap:14px}
+  .dash-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .dash-top h3{font-size:21px}
+  .filters{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{font-size:12px;color:var(--ink-2);background:#fff;border:1px solid var(--line);border-radius:9px;padding:6px 12px;font-weight:500}
+  .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  .kpi{border:1px solid var(--line);border-radius:13px;padding:12px 13px}
+  .kpi .k-top{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;font-weight:500}
+  .kpi .k-ico{width:22px;height:22px;border-radius:6px;background:var(--mint-1);display:grid;place-items:center;color:var(--green-600)}
+  .kpi .k-val{font-family:'PT Serif',serif;font-weight:700;font-size:21px;margin-top:5px}
+  .kpi .k-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .grid-2{display:grid;grid-template-columns:1.35fr 1fr;gap:14px}
+  .grid-2b{display:grid;grid-template-columns:1fr 1.25fr;gap:14px}
+  .pane{border:1px solid var(--line);border-radius:13px;padding:14px 16px;min-width:0}
+  .pane h4{font-family:'Inter',sans-serif;font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+  .legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin-bottom:4px}
+  .legend i{display:inline-block;width:14px;height:2px;background:var(--green);margin-right:5px;vertical-align:middle}
+  .legend .plan i{background:var(--muted);height:0;border-top:2px dashed var(--muted)}
+  .bars{display:flex;flex-direction:column;gap:9px}
+  .bar-row{font-size:12px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+  .bar-row .name{color:var(--ink-2)}
+  .track{grid-column:1/-1;height:7px;background:#eef4ef;border-radius:4px;overflow:hidden;margin-top:-3px}
+  .track i{display:block;height:100%;border-radius:4px}
+  .mgr{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px solid #f0f5f1}
+  .mgr .who{display:flex;align-items:center;gap:9px;color:var(--ink-2)}
+  .mgr .num{width:18px;color:var(--muted);font-size:11px}.mgr .pct{font-weight:600}
+  @media(max-width:760px){.kpi-row{grid-template-columns:repeat(2,1fr)}.grid-2,.grid-2b{grid-template-columns:1fr}.dash-frame{grid-template-columns:1fr}.side{display:none}}
+  .hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:7;font-size:12px;color:var(--green-700);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:max(0,calc(1 - var(--p)*3));font-weight:500}
+  .hint .arrow{width:22px;height:22px;border-right:2px solid var(--green);border-bottom:2px solid var(--green);transform:rotate(45deg);animation:bob 1.6s infinite}
+  @keyframes bob{0%,100%{transform:rotate(45deg) translate(0,0)}50%{transform:rotate(45deg) translate(4px,4px)}}
+
+  /* positioning strip */
+  .strip{background:#11271a;color:#dcefdf;text-align:center;padding:30px 24px}
+  .strip b{color:#fff}
+  .strip p{font-family:'PT Serif',serif;font-size:clamp(18px,2.4vw,25px);max-width:860px;margin:0 auto;font-style:italic}
+
+  /* generic sections */
+  section.block{padding:92px 0;position:relative}
+  .sec-head{max-width:720px;margin:0 auto 50px;text-align:center}
+  .sec-head h2{font-size:clamp(29px,4.4vw,45px);font-weight:700;margin-top:18px}
+  .sec-head p{margin-top:14px;color:var(--ink-2);font-size:17px}
+
+  /* problems */
+  #problems{background:#fff}
+  .prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .prob{border:1px solid var(--line);border-radius:16px;padding:24px;background:#fbfdfb}
+  .prob .n{font-family:'PT Serif',serif;font-weight:700;color:#cfe6d4;font-size:30px;line-height:1}
+  .prob h3{font-size:18px;margin:10px 0 7px}
+  .prob p{color:var(--ink-2);font-size:14px}
+  @media(max-width:900px){.prob-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.prob-grid{grid-template-columns:1fr}}
+
+  /* platform schema */
+  #platform{background:linear-gradient(180deg,#f6fbf4,#eef8f0)}
+  .schema{display:grid;grid-template-columns:1fr 60px 1.15fr 60px 1fr;align-items:center;gap:0}
+  .col-title{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;text-align:center}
+  .pills{display:flex;flex-direction:column;gap:9px}
+  .pill{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 14px;font-size:14px;font-weight:500;color:var(--ink-2);box-shadow:var(--shadow-sm)}
+  .platform-box{background:linear-gradient(135deg,#1f7a3a,#15602c);border-radius:20px;padding:24px 22px;color:#fff;box-shadow:var(--shadow);text-align:center}
+  .platform-box h3{color:#fff;font-size:21px}
+  .platform-box .sub{color:#cbe8d0;font-size:12.5px;margin-top:4px}
+  .pmods{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:16px}
+  .pmod{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:8px 6px;font-size:11.5px;font-weight:500}
+  .flow{position:relative;height:2px;background:repeating-linear-gradient(90deg,#bcdfc6 0 6px,transparent 6px 12px)}
+  .flow::after{content:"";position:absolute;right:-2px;top:-3px;border-left:7px solid var(--green);border-top:4px solid transparent;border-bottom:4px solid transparent}
+  .flow .dot{position:absolute;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--green);animation:run 2.2s linear infinite}
+  @keyframes run{from{left:0;opacity:0}10%{opacity:1}90%{opacity:1}to{left:100%;opacity:0}}
+  @media(max-width:880px){
+    .schema{grid-template-columns:1fr;gap:14px}
+    .flow{height:30px;width:2px;justify-self:center;background:repeating-linear-gradient(180deg,#bcdfc6 0 6px,transparent 6px 12px)}
+    .flow::after{right:auto;top:auto;left:-3px;bottom:-2px;border-left:4px solid transparent;border-right:4px solid transparent;border-top:7px solid var(--green)}
+    .flow .dot{animation:rund 2.2s linear infinite;left:-3px}
+    @keyframes rund{from{top:0;opacity:0}10%{opacity:1}90%{opacity:1}to{top:100%;opacity:0}}
+  }
+
+  /* ecosystem + products */
+  #products{background:#fff}
+  .eco{max-width:720px;margin:0 auto 44px}
+  .eco svg{width:100%;height:auto;display:block}
+  .prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .prod{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:26px 24px;box-shadow:var(--shadow-sm);transition:.2s;display:flex;flex-direction:column}
+  .prod:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:#cfe6d4}
+  .prod .tag{font-size:12px;font-weight:600;color:var(--green);letter-spacing:.06em}
+  .prod .ic{width:50px;height:50px;border-radius:13px;background:var(--mint-1);display:grid;place-items:center;color:var(--green-600);margin:8px 0 16px;font-weight:700}
+  .prod h3{font-size:19px;margin-bottom:8px}
+  .prod .desc{color:var(--ink-2);font-size:14px;flex:1}
+  .caps{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+  .cap{font-size:12px;color:var(--green-700);background:var(--mint-1);border-radius:7px;padding:5px 10px;font-weight:500}
+  @media(max-width:920px){.prod-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.prod-grid{grid-template-columns:1fr}}
+
+  /* for whom */
+  #audience{background:linear-gradient(180deg,#fff,#f1f8f2)}
+  .aud-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  .aud{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 18px;box-shadow:var(--shadow-sm)}
+  .aud .ic{width:42px;height:42px;border-radius:11px;background:var(--mint-1);display:grid;place-items:center;color:var(--green-600);font-size:18px;margin-bottom:13px}
+  .aud h3{font-size:16px;margin-bottom:7px}
+  .aud p{color:var(--ink-2);font-size:13px}
+  @media(max-width:900px){.aud-grid{grid-template-columns:1fr 1fr 1fr}}
+  @media(max-width:560px){.aud-grid{grid-template-columns:1fr 1fr}}
+
+  /* how */
+  #how{background:#fff}
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:s}
+  .step{position:relative;padding-top:14px}
+  .step::before{counter-increment:s;content:"0" counter(s);font-family:'PT Serif',serif;font-size:14px;font-weight:700;color:#fff;background:var(--green);width:34px;height:34px;border-radius:10px;display:grid;place-items:center;margin-bottom:16px}
+  .step h3{font-size:16px;margin-bottom:7px}
+  .step p{color:var(--ink-2);font-size:13.5px}
+  .step::after{content:"";position:absolute;top:30px;left:46px;right:-8px;height:2px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 12px)}
+  .step:last-child::after{display:none}
+  @media(max-width:900px){.steps{grid-template-columns:1fr 1fr 1fr}.step::after{display:none}}
+  @media(max-width:520px){.steps{grid-template-columns:1fr 1fr}}
+
+  /* results */
+  #results{background:linear-gradient(180deg,#f1f8f2,#e7f5ea)}
+  .res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .res{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow-sm)}
+  .res .tick{width:34px;height:34px;border-radius:10px;background:var(--mint-1);color:var(--green-600);display:grid;place-items:center;font-weight:700;margin-bottom:13px}
+  .res h3{font-size:17px;margin-bottom:7px}
+  .res p{color:var(--ink-2);font-size:14px}
+  @media(max-width:900px){.res-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.res-grid{grid-template-columns:1fr}}
+
+  /* expertise */
+  .exp{background:linear-gradient(135deg,#1f7a3a,#15602c);border-radius:26px;color:#fff;padding:56px clamp(28px,6vw,72px);position:relative;overflow:hidden}
+  .exp::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.10) 1px,transparent 1px);background-size:24px 24px}
+  .exp-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center;position:relative;z-index:1}
+  .exp h2{font-size:clamp(27px,3.8vw,40px);color:#fff}
+  .exp p{margin-top:16px;color:#dcefdf;font-size:16.5px}
+  .exp .stats{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .stat .n{font-family:'PT Serif',serif;font-size:42px;font-weight:700}
+  .stat .l{color:#cbe8d0;font-size:13.5px;margin-top:2px}
+  @media(max-width:760px){.exp-grid{grid-template-columns:1fr;gap:30px}}
+
+  /* cta */
+  #cta{background:#fff}
+  .cta-card{background:#fff;border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+  .cta-left{padding:52px clamp(28px,4vw,52px)}
+  .cta-left h2{font-size:clamp(27px,3.4vw,38px)}
+  .cta-left p{margin-top:16px;color:var(--ink-2);font-size:16px}
+  .cta-btns{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap}
+  .cta-form{background:#fbfdfb;border-left:1px solid var(--line);padding:46px clamp(28px,4vw,46px);display:flex;flex-direction:column;gap:13px}
+  .cta-form label{font-size:13px;font-weight:500;color:var(--ink-2);margin-bottom:-7px}
+  .cta-form input{font-family:inherit;font-size:15px;padding:12px 14px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink)}
+  .cta-form input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(47,158,77,.15)}
+  .cta-form .btn{margin-top:8px;justify-content:center}
+  .form-note{font-size:12px;color:var(--muted);text-align:center}
+  .thanks{display:none;background:var(--mint-1);border-radius:12px;padding:16px;color:var(--green-700);font-size:14px;text-align:center;font-weight:500}
+  @media(max-width:820px){.cta-card{grid-template-columns:1fr}.cta-form{border-left:none;border-top:1px solid var(--line)}}
+
+  footer{background:#11271a;color:#bcd0c1;padding:60px 0 34px;font-size:14px}
+  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:36px}
+  footer .logo-txt,footer .logo-txt span{color:#fff}
+  footer h5{color:#fff;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:14px}
+  footer ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+  footer ul a:hover{color:#fff}
+  .foot-tag{margin-top:16px;max-width:300px;color:#9fbaa6;font-size:14px}
+  .foot-bottom{margin-top:42px;padding-top:22px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:#84a18c;font-size:13px}
+  @media(max-width:760px){.foot-grid{grid-template-columns:1fr 1fr}}
+
+  @media(prefers-reduced-motion:reduce){
+    .stage{height:auto;min-height:100vh}
+    .sticky{position:relative;height:auto;padding:120px 0 60px}
+    .hero{opacity:1;transform:none;margin-bottom:40px}
+    .floaters,.hint{display:none}
+    .dash{position:relative;opacity:1;transform:none;filter:none;margin:0 auto}
+    .flow .dot{animation:none;display:none}
+  }
+</style>
+</head>
+<body>
+
+<header id="hdr">
+  <div class="wrap nav">
+    <div class="logo"><div class="logo-mark">ba</div><div class="logo-txt">бізнес<span>аналітика</span></div></div>
+    <nav class="nav-links">
+      <a href="#platform">Платформа</a>
+      <a href="#products">Продукти</a>
+      <a href="#how">Як це працює</a>
+      <a href="#expertise">Про нас</a>
+      <a href="#cta">Контакти</a>
+    </nav>
+    <a href="#cta" class="btn btn-primary">Замовити демо</a>
+  </div>
+</header>
+
+<!-- STAGE -->
+<section class="stage" id="stage">
+  <div class="sticky" id="sticky">
+    <div class="floaters">
+      <div class="fcard f1"><div class="k-top"><span class="k-ico">▣</span> Продажі</div><div class="k-val">₴4.1млн</div><div class="k-sub">План 4.74 млн <span class="delta-down">↓ 13.6%</span></div></div>
+      <div class="fcard f2"><div class="k-top"><span class="k-ico">◈</span> Дистрибуція</div><div class="k-val">87.4%</div><div class="k-sub">Покриття території <span class="delta-up">↑ 3.1%</span></div></div>
+      <div class="fcard f3"><div class="k-top"><span class="k-ico">◷</span> Промо</div><div class="k-val">12 акцій</div><div class="k-sub">Бюджет ₴1.8млн · виконано 92%</div></div>
+      <div class="fcard f4"><div class="k-top"><span class="k-ico">★</span> KPI команди</div><div class="k-val">88.2%</div><div class="k-sub">Виконання планів <span class="delta-up">↑ 5.4%</span></div></div>
+    </div>
+
+    <div class="hero" id="hero">
+      <span class="eyebrow">FMCG Sales Management Platform</span>
+      <h1>Керуйте FMCG-продажами<br>в <span class="em">одному</span> вікні</h1>
+      <p>Об'єднуємо дані з дистриб'юторів, BAS/1C, ERP, CRM, Excel та торгових команд у єдину систему управління продажами, дистрибуцією, промо та KPI.</p>
+      <div class="hero-cta">
+        <a href="#cta" class="btn btn-primary">Отримати демонстрацію</a>
+        <a href="#products" class="btn btn-ghost">Подивитись рішення</a>
+      </div>
+    </div>
+
+    <div class="dash" id="dash">
+      <div class="panel dash-frame">
+        <aside class="side">
+          <div class="logo"><div class="logo-mark">ba</div><div class="logo-txt">бізнес<span>аналітика</span></div></div>
+          <div class="side-item active"><span class="dot"></span> Огляд</div>
+          <div class="side-item"><span class="dot"></span> Продажі</div>
+          <div class="side-item"><span class="dot"></span> Дистрибуція</div>
+          <div class="side-item"><span class="dot"></span> Менеджери</div>
+          <div class="side-item"><span class="dot"></span> Промо</div>
+          <div class="side-item"><span class="dot"></span> Storecheck</div>
+          <div class="side-item"><span class="dot"></span> Налаштування</div>
+        </aside>
+        <div class="dash-main">
+          <div class="dash-top">
+            <h3>Звіт за період: травень 2026</h3>
+            <div class="filters"><span class="chip">Період ▾</span><span class="chip">Мережа ▾</span><span class="chip">Категорія ▾</span><span class="chip">Бренд ▾</span></div>
+          </div>
+          <div class="kpi-row">
+            <div class="kpi"><div class="k-top"><span class="k-ico">▣</span>Продажі</div><div class="k-val">₴4.1млн</div><div class="k-sub">План 4.74 млн <span class="delta-down">↓13.6%</span></div></div>
+            <div class="kpi"><div class="k-top"><span class="k-ico">◈</span>Дистрибуція</div><div class="k-val">87.4%</div><div class="k-sub">покриття <span class="delta-up">↑3.1%</span></div></div>
+            <div class="kpi"><div class="k-top"><span class="k-ico">▤</span>Нац. мережі</div><div class="k-val">378.8 тис</div><div class="k-sub">План 491.3 <span class="delta-down">↓22.9%</span></div></div>
+            <div class="kpi"><div class="k-top"><span class="k-ico">◷</span>Промо</div><div class="k-val">12 акцій</div><div class="k-sub">виконано <span class="delta-up">92%</span></div></div>
+            <div class="kpi"><div class="k-top"><span class="k-ico">★</span>KPI команди</div><div class="k-val">88.2%</div><div class="k-sub">план/факт <span class="delta-up">↑5.4%</span></div></div>
+          </div>
+          <div class="grid-2">
+            <div class="pane">
+              <h4>Продажі: факт vs план</h4>
+              <div class="legend"><span><i></i>Факт</span><span class="plan"><i></i>План</span></div>
+              <svg id="chart" viewBox="0 0 560 210" width="100%" preserveAspectRatio="xMidYMid meet"></svg>
+            </div>
+            <div class="pane"><h4>Виконання по брендпланам <span class="chip">Топ 10 ▾</span></h4><div class="bars" id="bars"></div></div>
+          </div>
+          <div class="grid-2b">
+            <div class="pane"><h4>Топ менеджерів</h4><div id="mgrs"></div></div>
+            <div class="pane"><h4>Деталізація по менеджерах</h4><div id="detail" style="font-size:11.5px"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hint"><span>Прокрутіть</span><span class="arrow"></span></div>
+  </div>
+</section>
+
+<!-- POSITIONING STRIP -->
+<div class="strip"><p>Не просто BI — <b>операційна система управління продажами FMCG</b>.</p></div>
+
+<!-- PROBLEMS -->
+<section class="block" id="problems">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Що ми вирішуємо</span>
+      <h2>Коли дані розрізнені — продажами складно керувати</h2>
+      <p>Поки інформація живе в різних системах, рішення приймаються пізно та наосліп.</p>
+    </div>
+    <div class="prob-grid" id="probGrid"></div>
+  </div>
+</section>
+
+<!-- PLATFORM -->
+<section class="block" id="platform">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Єдина платформа</span>
+      <h2>Від сирих даних — до керованої системи продажів</h2>
+      <p>Ми збираємо дані з усіх джерел, очищаємо й структуруємо їх, і повертаємо у вигляді готових рішень.</p>
+    </div>
+    <div class="schema">
+      <div>
+        <div class="col-title">Джерела даних</div>
+        <div class="pills" id="srcPills"></div>
+      </div>
+      <div class="flow"><span class="dot"></span></div>
+      <div class="platform-box">
+        <h3>Business Analytics Platform</h3>
+        <div class="sub">інтеграція · якість даних · OLAP / DWH · BI</div>
+        <div class="pmods" id="pmods"></div>
+      </div>
+      <div class="flow"><span class="dot"></span></div>
+      <div>
+        <div class="col-title">Результати</div>
+        <div class="pills" id="resPills"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="block" id="products">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Екосистема продуктів</span>
+      <h2>П'ять модулів однієї платформи</h2>
+      <p>Кожен модуль працює самостійно та посилюється даними інших — від складу дистриб'ютора до полиці в торговій точці.</p>
+    </div>
+    <div class="eco">
+      <svg viewBox="0 0 760 380" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+        <g stroke="#cfe6d4" stroke-width="2">
+          <line x1="380" y1="190" x2="380" y2="58"/>
+          <line x1="380" y1="190" x2="521" y2="135"/>
+          <line x1="380" y1="190" x2="467" y2="300"/>
+          <line x1="380" y1="190" x2="293" y2="300"/>
+          <line x1="380" y1="190" x2="239" y2="135"/>
+        </g>
+        <g>
+          <circle cx="380" cy="58" r="46" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
+          <text x="380" y="54" text-anchor="middle" font-size="16" font-weight="700" fill="#175f2d">DMS</text>
+          <text x="380" y="70" text-anchor="middle" font-size="9.5" fill="#43564a">дистрибуція</text>
+
+          <circle cx="521" cy="135" r="46" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
+          <text x="521" y="131" text-anchor="middle" font-size="16" font-weight="700" fill="#175f2d">BI</text>
+          <text x="521" y="147" text-anchor="middle" font-size="9.5" fill="#43564a">аналітика</text>
+
+          <circle cx="467" cy="300" r="46" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
+          <text x="467" y="296" text-anchor="middle" font-size="13" font-weight="700" fill="#175f2d">Orders</text>
+          <text x="467" y="312" text-anchor="middle" font-size="9.5" fill="#43564a">замовлення</text>
+
+          <circle cx="293" cy="300" r="46" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
+          <text x="293" y="296" text-anchor="middle" font-size="11" font-weight="700" fill="#175f2d">Storecheck</text>
+          <text x="293" y="312" text-anchor="middle" font-size="9.5" fill="#43564a">аудит ТТ</text>
+
+          <circle cx="239" cy="135" r="46" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
+          <text x="239" y="131" text-anchor="middle" font-size="16" font-weight="700" fill="#175f2d">TMA</text>
+          <text x="239" y="147" text-anchor="middle" font-size="9.5" fill="#43564a">промо</text>
+        </g>
+        <circle cx="380" cy="190" r="62" fill="#1f7a3a"/>
+        <text x="380" y="183" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Платформа</text>
+        <text x="380" y="200" text-anchor="middle" font-size="10.5" fill="#cbe8d0">управління</text>
+        <text x="380" y="214" text-anchor="middle" font-size="10.5" fill="#cbe8d0">продажами</text>
+      </svg>
+    </div>
+    <div class="prod-grid" id="prodGrid"></div>
+  </div>
+</section>
+
+<!-- AUDIENCE -->
+<section class="block" id="audience">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Для кого</span>
+      <h2>Рішення для тих, хто керує продажами на основі даних</h2>
+    </div>
+    <div class="aud-grid" id="audGrid"></div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="block" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Як це працює</span>
+      <h2>Беремо на себе повний цикл</h2>
+      <p>Від інтеграції даних до управлінських рішень — вам не потрібно будувати все самостійно.</p>
+    </div>
+    <div class="steps" id="steps"></div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="block" id="results">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Що отримує бізнес</span>
+      <h2>Прозора система управління продажами</h2>
+    </div>
+    <div class="res-grid" id="resGrid"></div>
+  </div>
+</section>
+
+<!-- EXPERTISE -->
+<section class="block" id="expertise">
+  <div class="wrap">
+    <div class="exp">
+      <div class="exp-grid">
+        <div>
+          <h2>Ми не просто будуємо звіти — ми допомагаємо знаходити точки росту</h2>
+          <p>За 15 років роботи з FMCG-продажами ми сформували практичну експертизу в дистрибуції, управлінській аналітиці, торгових командах, плануванні та промо. Тому кожне рішення адаптуємо не лише під дані, а й під реальні бізнес-процеси клієнта.</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="n">15</div><div class="l">років у FMCG-аналітиці</div></div>
+          <div class="stat"><div class="n">60%</div><div class="l">продажів під контролем DMS</div></div>
+          <div class="stat"><div class="n">Щодня</div><div class="l">збір даних із систем клієнта</div></div>
+          <div class="stat"><div class="n">UA · KZ</div><div class="l">клієнти в кількох країнах</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="block" id="cta">
+  <div class="wrap">
+    <div class="cta-card">
+      <div class="cta-left">
+        <h2>Хочете побачити, як це працюватиме у вашій компанії?</h2>
+        <p>Покажемо демо на прикладі FMCG-продажів, дистрибуції, промо, Storecheck або BI-аналітики — і розберемо 1–2 «вузьких місця» у ваших продажах.</p>
+        <div class="cta-btns">
+          <a href="#" class="btn btn-primary">Замовити демонстрацію</a>
+          <a href="#" class="btn btn-ghost">Обговорити задачу</a>
+        </div>
+      </div>
+      <div class="cta-form" id="form">
+        <label>Ім'я</label><input type="text" placeholder="Як до вас звертатися">
+        <label>Компанія</label><input type="text" placeholder="Назва компанії">
+        <label>Телефон</label><input type="tel" placeholder="+380 / +7">
+        <label>Email</label><input type="email" placeholder="you@company.com">
+        <button class="btn btn-primary" id="submitBtn">Замовити демо</button>
+        <div class="form-note">Натискаючи кнопку, ви погоджуєтесь з політикою конфіденційності.</div>
+        <div class="thanks" id="thanks">Дякуємо! Прототип не надсилає дані — підключіть форму до CRM/пошти при запуску.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo"><div class="logo-mark">ba</div><div class="logo-txt">бізнес<span>аналітика</span></div></div>
+        <p class="foot-tag">FMCG Sales Management Platform: BI, DMS, Storecheck, TMA та автоматизація замовлень в єдиній системі управління продажами.</p>
+      </div>
+      <div><h5>Продукти</h5><ul>
+        <li><a href="#products">DMS</a></li><li><a href="#products">BI-аналітика</a></li>
+        <li><a href="#products">Distributor Orders</a></li><li><a href="#products">Storecheck</a></li><li><a href="#products">TMA</a></li>
+      </ul></div>
+      <div><h5>Компанія</h5><ul>
+        <li><a href="#platform">Платформа</a></li><li><a href="#how">Як це працює</a></li>
+        <li><a href="#expertise">Про нас</a></li><li><a href="#cta">Контакти</a></li>
+      </ul></div>
+      <div><h5>Контакти</h5><ul>
+        <li><a href="mailto:info@bi-serv.com">info@bi-serv.com</a></li><li>bi-serv.com</li><li>Україна · Казахстан</li>
+      </ul></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 бізнес аналітика. Усі права захищені.</span><span>Прототип головної сторінки</span></div>
+  </div>
+</footer>
+
+<script>
+const hdr=document.getElementById('hdr');
+addEventListener('scroll',()=>hdr.classList.toggle('scrolled',scrollY>20));
+
+const stage=document.getElementById('stage'),sticky=document.getElementById('sticky');
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function tick(){
+  const r=stage.getBoundingClientRect();
+  const total=stage.offsetHeight-innerHeight;
+  let p=Math.max(0,Math.min(1,(-r.top)/total));
+  sticky.style.setProperty('--p',p.toFixed(4));
+  requestAnimationFrame(tick);
+}
+if(reduce){sticky.style.setProperty('--p',1);}else{requestAnimationFrame(tick);}
+
+/* chart */
+const months=['січ','лют','бер','кві','тра','чер','лип','сер','вер','жов','лис','гру'];
+const plan=[120,150,178,165,205,150,188,206,214,232,236,250];
+const fact=[112,142,162,205,176,150];
+const W=560,H=210,padL=34,padR=14,padT=12,padB=26,maxV=270;
+const x=i=>padL+(W-padL-padR)*i/(months.length-1), y=v=>padT+(H-padT-padB)*(1-v/maxV);
+const poly=a=>a.map((v,i)=>x(i)+','+y(v)).join(' ');
+let g='';
+[0,90,180,270].forEach(v=>{g+=`<line x1="${padL}" y1="${y(v)}" x2="${W-padR}" y2="${y(v)}" stroke="#eef4ef"/>`});
+months.forEach((m,i)=>{g+=`<text x="${x(i)}" y="${H-8}" font-size="9" fill="#9aa89e" text-anchor="middle" font-family="Inter">${m} 26</text>`});
+g+=`<polyline points="${poly(plan)}" fill="none" stroke="#9aa89e" stroke-width="2" stroke-dasharray="4 4"/>`;
+g+=`<polyline points="${poly(fact)}" fill="none" stroke="#2f9e4d" stroke-width="2.5"/>`;
+fact.forEach((v,i)=>{g+=`<circle cx="${x(i)}" cy="${y(v)}" r="3" fill="#2f9e4d"/>`});
+const li=fact.length-1;
+g+=`<rect x="${x(li)-20}" y="${y(fact[li])-26}" width="40" height="18" rx="5" fill="#2f9e4d"/><text x="${x(li)}" y="${y(fact[li])-13}" font-size="9.5" fill="#fff" text-anchor="middle" font-family="Inter" font-weight="600">63.8%</text>`;
+document.getElementById('chart').innerHTML=g;
+
+/* bars */
+const brands=[['SOLVIRA Бриз 0.5л',93.4],['SOLVIRA Бриз 0.25л',81.2],['SOLVIRA Бриз 0.1л',99.7],['SOLVIRA Цитрус 0.5л',64.3],['SOLVIRA Горіх 0.7л',72.6],['SOLVIRA Бриз 0.35л',82.7],['SOLVIRA Квас 1.5л',81.1],['SOLVIRA Традиц. 0.75л',72.1]];
+document.getElementById('bars').innerHTML=brands.map(([n,v])=>`<div><div class="bar-row"><span class="name">${n}</span><b>${v.toFixed(1)}%</b></div><div class="track"><i style="width:${v}%;background:${v>=80?'#2f9e4d':'#e09a3a'}"></i></div></div>`).join('');
+
+/* managers */
+const mgrs=[['Мороз Петро',99.7],['Любашкін Ігор',95.6],['Ступень Андрій',95.6],['Пінчук Роман',90.3],['Романенко Ігор',89.8],['Коваленко Дмитро',88.2]];
+document.getElementById('mgrs').innerHTML=mgrs.map((m,i)=>`<div class="mgr"><span class="who"><span class="num">${i+1}</span>${m[0]}</span><span class="pct" style="color:${m[1]>=90?'#2f9e4d':'#e09a3a'}">${m[1]}%</span></div>`).join('');
+
+/* detail */
+const rows=[['Коваленко Дмитро','2 375 412','2 078 331','87.5%','30 127'],['↳ Схід','7 924','10 231','129.1%','8'],['↳ Захід','900 115','782 441','86.9%','9 623'],['↳ Північ','912 768','815 824','89.4%','9 761'],['Гнатюк Роман','300 115','286 902','95.6%','2 511'],['Романенко Ігор','227 415','196 002','85.8%','1 481']];
+document.getElementById('detail').innerHTML=`<table style="width:100%;border-collapse:collapse"><tr style="color:#9aa89e;text-align:left"><th style="font-weight:500;padding:4px 0">Менеджер</th><th style="font-weight:500;text-align:right">План ₴</th><th style="font-weight:500;text-align:right">Продажі ₴</th><th style="font-weight:500;text-align:right">Викон.</th><th style="font-weight:500;text-align:right">ТТ</th></tr>${rows.map(r=>`<tr style="border-top:1px solid #f0f5f1"><td style="padding:5px 0;color:#43564a">${r[0]}</td><td style="text-align:right;color:#43564a">${r[1]}</td><td style="text-align:right;color:#43564a">${r[2]}</td><td style="text-align:right;font-weight:600;color:${parseFloat(r[3])>=90?'#2f9e4d':'#e09a3a'}">${r[3]}</td><td style="text-align:right;color:#43564a">${r[4]}</td></tr>`).join('')}</table>`;
+
+/* problems */
+const probs=[
+  ['Немає єдиної картини продажів','Дані в ERP, Excel, CRM та у дистриб\'юторів живуть окремо.'],
+  ['Складно контролювати дистрибуцію','Незрозуміло, де товар продається, де OOS, а де втрачається покриття.'],
+  ['Плани не пов\'язані з фактом','Команди бачать результат запізно, коли вплинути вже складно.'],
+  ['Промо важко контролювати','Акції погоджуються вручну, бюджети розмиваються, факт непрозорий.'],
+  ['Менеджмент збирає таблиці','Замість аналізу причин команда витрачає час на збір даних.'],
+  ['Немає прозорої мотивації','KPI рахуються складно, із затримкою або вручну.'],
+];
+document.getElementById('probGrid').innerHTML=probs.map((p,i)=>`<div class="prob"><div class="n">0${i+1}</div><h3>${p[0]}</h3><p>${p[1]}</p></div>`).join('');
+
+/* platform schema */
+const sources=['Дистриб\'ютори','BAS / 1C','ERP','CRM','Excel','Торгові команди','Мережі / Key Accounts'];
+const results=['Продажі та плани','Дистрибуція','Дебіторка','Маржинальність','Промо','Storecheck','KPI команди','Рекомендовані замовлення'];
+const pmods=['Data Integration','Data Quality','OLAP / DWH','Power BI','Planning & Workflow','Mobile / Web'];
+document.getElementById('srcPills').innerHTML=sources.map(s=>`<div class="pill">${s}</div>`).join('');
+document.getElementById('resPills').innerHTML=results.map(s=>`<div class="pill">${s}</div>`).join('');
+document.getElementById('pmods').innerHTML=pmods.map(s=>`<div class="pmod">${s}</div>`).join('');
+
+/* products */
+const products=[
+  ['01','DMS','Контроль дистрибуції через дистриб\'юторів','Щоденно збираємо дані дистриб\'юторів і будуємо контроль продажів, територій, SKU та команд.',['Щоденний збір даних','План/факт по територіях','Цільова дистрибуція','Геокодування бази']],
+  ['02','BI','BI-аналітика для ERP, CRM та фінансів','Дані з ERP, CRM, BAS/1C та Excel — у зрозумілих управлінських дашбордах.',['Продажі план/факт','Дебіторка','Маржинальність і P&L','OLAP + Power BI']],
+  ['03','DOS','Рекомендовані замовлення дистриб\'юторів','Аналізуємо продажі, залишки та плани й формуємо рекомендовані замовлення.',['Рекомендовані замовлення','Контроль service level','Запобігання OOS','Просування новинок']],
+  ['04','SC','Storecheck: контроль присутності в точках','Мобільний аудит торгових точок: полиця, ціни, фото та стандарти викладки.',['OOS і прайс-аудит','Фейсинги й залишки','Планограми','Завдання на візит']],
+  ['05','TMA','Планування та контроль промо в мережах','Інструмент для KAM і трейд-маркетингу: промо, бюджет і контроль виконання домовленостей.',['Планування акцій','Мультиплікатори обсягу','Workflow погодження','Аналіз ефективності']],
+];
+document.getElementById('prodGrid').innerHTML=products.map(p=>`<div class="prod"><span class="tag">${p[0]}</span><div class="ic">${p[1]}</div><h3>${p[2]}</h3><div class="desc">${p[3]}</div><div class="caps">${p[4].map(c=>`<span class="cap">${c}</span>`).join('')}</div></div>`).join('');
+
+/* audience */
+const aud=[
+  ['◆','Виробники','Контроль дистриб\'юторів, точок, залишків, промо та KPI команди.'],
+  ['▤','Дистриб\'ютори','Аналітика продажів, постачальників, команди, маршрутів і дебіторки.'],
+  ['★','Власники бізнесу','Єдина картина продажів, прибутковості, ризиків і точок росту.'],
+  ['▣','Комерційні директори','План/факт, виконання KPI, ефективність каналів і територій.'],
+  ['◷','Trade Marketing / KAM','Промо, мережі, полиці, планограми та контроль домовленостей.'],
+];
+document.getElementById('audGrid').innerHTML=aud.map(a=>`<div class="aud"><div class="ic">${a[0]}</div><h3>${a[1]}</h3><p>${a[2]}</p></div>`).join('');
+
+/* steps */
+const steps=[
+  ['Аудит процесів і даних','Аналізуємо джерела, канали продажів, KPI та поточні звіти.'],
+  ['Інтеграція джерел','Підключаємо ERP, BAS/1C, CRM, Excel та дистриб\'юторів.'],
+  ['Побудова DWH / OLAP / BI','Очищаємо, структуруємо та збагачуємо дані для аналізу.'],
+  ['Запуск продуктів','Налаштовуємо DMS, BI, Storecheck, TMA чи Order System.'],
+  ['Супровід і розвиток','Щомісяця додаємо звіти, KPI, автоматизації та інсайти.'],
+];
+document.getElementById('steps').innerHTML=steps.map(s=>`<div class="step"><h3>${s[0]}</h3><p>${s[1]}</p></div>`).join('');
+
+/* results */
+const res=[
+  ['Єдина версія правди','Усі продажі, плани, залишки, промо та KPI в одній системі.'],
+  ['Швидші рішення','Менеджмент бачить відхилення одразу, а не після ручних звітів.'],
+  ['Контроль дистрибуції','Видно, де товар продається, де втрачається покриття, де OOS.'],
+  ['Ефективніша команда','KPI, маршрути, точки та виконання планів — прозоро.'],
+  ['Керовані промо','Акції плануються, погоджуються та аналізуються в єдиному процесі.'],
+  ['Менше Excel-залежності','Рутина автоматизується, команда фокусується на рішеннях.'],
+];
+document.getElementById('resGrid').innerHTML=res.map(r=>`<div class="res"><div class="tick">✓</div><h3>${r[0]}</h3><p>${r[1]}</p></div>`).join('');
+
+document.getElementById('submitBtn').addEventListener('click',()=>{document.getElementById('thanks').style.display='block';});
+</script>
+</body>
+</html>
