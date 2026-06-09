@@ -239,6 +239,20 @@
     .dash{position:relative;opacity:1;transform:none;filter:none;margin:0 auto}
     .flow .dot{animation:none;display:none}
   }
+
+  /* ---- inline editing ---- */
+  .edit-mode [data-edit-id]{outline:1px dashed rgba(47,158,77,.55);outline-offset:3px;border-radius:5px;cursor:text}
+  .edit-mode [data-edit-id]:hover{background:rgba(47,158,77,.07)}
+  [data-edit-id].is-editing:focus{outline:2px solid var(--green);background:rgba(47,158,77,.08)}
+  body.edit-mode a[data-edit-id]{pointer-events:auto}
+  #editbar{position:fixed;right:18px;bottom:18px;z-index:200;display:flex;gap:8px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px;box-shadow:var(--shadow);align-items:center}
+  #editbar button{font-family:inherit;font-size:13px;font-weight:600;border:none;border-radius:9px;padding:9px 14px;cursor:pointer;transition:.15s}
+  #editbar .eb-edit{background:var(--green);color:#fff}
+  #editbar .eb-edit:hover{background:var(--green-600)}
+  #editbar .eb-2{background:var(--mint-1);color:var(--green-700)}
+  #editbar .eb-3{background:#fff;color:var(--muted);border:1px solid var(--line)}
+  #editbar.collapsed .eb-2,#editbar.collapsed .eb-3{display:none}
+  @media(max-width:560px){#editbar{right:10px;bottom:10px;flex-wrap:wrap;max-width:calc(100% - 20px)}}
 </style>
 </head>
 <body>
@@ -261,10 +275,10 @@
 <section class="stage" id="stage">
   <div class="sticky" id="sticky">
     <div class="floaters">
-      <div class="fcard f1"><div class="k-top"><span class="k-ico">▣</span> Продажі</div><div class="k-val">₴4.1млн</div><div class="k-sub">План 4.74 млн <span class="delta-down">↓ 13.6%</span></div></div>
-      <div class="fcard f2"><div class="k-top"><span class="k-ico">◈</span> Дистрибуція</div><div class="k-val">87.4%</div><div class="k-sub">Покриття території <span class="delta-up">↑ 3.1%</span></div></div>
-      <div class="fcard f3"><div class="k-top"><span class="k-ico">◷</span> Промо</div><div class="k-val">12 акцій</div><div class="k-sub">Бюджет ₴1.8млн · виконано 92%</div></div>
-      <div class="fcard f4"><div class="k-top"><span class="k-ico">★</span> KPI команди</div><div class="k-val">88.2%</div><div class="k-sub">Виконання планів <span class="delta-up">↑ 5.4%</span></div></div>
+      <div class="fcard f1"><div class="k-top"><span class="k-ico">&#9635;</span> Продажі</div><div class="k-val">&#8372;4.1млн</div><div class="k-sub">План 4.74 млн <span class="delta-down">&#8595; 13.6%</span></div></div>
+      <div class="fcard f2"><div class="k-top"><span class="k-ico">&#9672;</span> Дистрибуція</div><div class="k-val">87.4%</div><div class="k-sub">Покриття території <span class="delta-up">&#8593; 3.1%</span></div></div>
+      <div class="fcard f3"><div class="k-top"><span class="k-ico">&#9719;</span> Промо</div><div class="k-val">12 акцій</div><div class="k-sub">Бюджет &#8372;1.8млн · виконано 92%</div></div>
+      <div class="fcard f4"><div class="k-top"><span class="k-ico">&#9733;</span> KPI команди</div><div class="k-val">88.2%</div><div class="k-sub">Виконання планів <span class="delta-up">&#8593; 5.4%</span></div></div>
     </div>
 
     <div class="hero" id="hero">
@@ -283,8 +297,8 @@
           <div class="logo"><div class="logo-mark">ba</div><div class="logo-txt">бізнес<span>аналітика</span></div></div>
           <div class="side-item active"><span class="dot"></span> Огляд</div>
           <div class="side-item"><span class="dot"></span> Продажі</div>
+          <div class="side-item"><span class="dot"></span> Планування</div>
           <div class="side-item"><span class="dot"></span> Дистрибуція</div>
-          <div class="side-item"><span class="dot"></span> Менеджери</div>
           <div class="side-item"><span class="dot"></span> Промо</div>
           <div class="side-item"><span class="dot"></span> Storecheck</div>
           <div class="side-item"><span class="dot"></span> Налаштування</div>
@@ -292,14 +306,14 @@
         <div class="dash-main">
           <div class="dash-top">
             <h3>Звіт за період: травень 2026</h3>
-            <div class="filters"><span class="chip">Період ▾</span><span class="chip">Мережа ▾</span><span class="chip">Категорія ▾</span><span class="chip">Бренд ▾</span></div>
+            <div class="filters"><span class="chip">Період &#9662;</span><span class="chip">Мережа &#9662;</span><span class="chip">Категорія &#9662;</span><span class="chip">Бренд &#9662;</span></div>
           </div>
           <div class="kpi-row">
-            <div class="kpi"><div class="k-top"><span class="k-ico">▣</span>Продажі</div><div class="k-val">₴4.1млн</div><div class="k-sub">План 4.74 млн <span class="delta-down">↓13.6%</span></div></div>
-            <div class="kpi"><div class="k-top"><span class="k-ico">◈</span>Дистрибуція</div><div class="k-val">87.4%</div><div class="k-sub">покриття <span class="delta-up">↑3.1%</span></div></div>
-            <div class="kpi"><div class="k-top"><span class="k-ico">▤</span>Нац. мережі</div><div class="k-val">378.8 тис</div><div class="k-sub">План 491.3 <span class="delta-down">↓22.9%</span></div></div>
-            <div class="kpi"><div class="k-top"><span class="k-ico">◷</span>Промо</div><div class="k-val">12 акцій</div><div class="k-sub">виконано <span class="delta-up">92%</span></div></div>
-            <div class="kpi"><div class="k-top"><span class="k-ico">★</span>KPI команди</div><div class="k-val">88.2%</div><div class="k-sub">план/факт <span class="delta-up">↑5.4%</span></div></div>
+            <div class="kpi"><div class="k-top"><span class="k-ico">&#9635;</span>Продажі</div><div class="k-val">&#8372;4.1млн</div><div class="k-sub">План 4.74 млн <span class="delta-down">&#8595;13.6%</span></div></div>
+            <div class="kpi"><div class="k-top"><span class="k-ico">&#9672;</span>Дистрибуція</div><div class="k-val">87.4%</div><div class="k-sub">покриття <span class="delta-up">&#8593;3.1%</span></div></div>
+            <div class="kpi"><div class="k-top"><span class="k-ico">&#9636;</span>Нац. мережі</div><div class="k-val">378.8 тис</div><div class="k-sub">План 491.3 <span class="delta-down">&#8595;22.9%</span></div></div>
+            <div class="kpi"><div class="k-top"><span class="k-ico">&#9719;</span>Промо</div><div class="k-val">12 акцій</div><div class="k-sub">виконано <span class="delta-up">92%</span></div></div>
+            <div class="kpi"><div class="k-top"><span class="k-ico">&#9733;</span>KPI команди</div><div class="k-val">88.2%</div><div class="k-sub">план/факт <span class="delta-up">&#8593;5.4%</span></div></div>
           </div>
           <div class="grid-2">
             <div class="pane">
@@ -307,7 +321,7 @@
               <div class="legend"><span><i></i>Факт</span><span class="plan"><i></i>План</span></div>
               <svg id="chart" viewBox="0 0 560 210" width="100%" preserveAspectRatio="xMidYMid meet"></svg>
             </div>
-            <div class="pane"><h4>Виконання по брендпланам <span class="chip">Топ 10 ▾</span></h4><div class="bars" id="bars"></div></div>
+            <div class="pane"><h4>Виконання по брендпланам <span class="chip">Топ 10 &#9662;</span></h4><div class="bars" id="bars"></div></div>
           </div>
           <div class="grid-2b">
             <div class="pane"><h4>Топ менеджерів</h4><div id="mgrs"></div></div>
@@ -320,7 +334,6 @@
   </div>
 </section>
 
-<!-- POSITIONING STRIP -->
 <div class="strip"><p>Не просто BI — <b>операційна система управління продажами FMCG</b>.</p></div>
 
 <!-- PROBLEMS -->
@@ -331,7 +344,14 @@
       <h2>Коли дані розрізнені — продажами складно керувати</h2>
       <p>Поки інформація живе в різних системах, рішення приймаються пізно та наосліп.</p>
     </div>
-    <div class="prob-grid" id="probGrid"></div>
+    <div class="prob-grid">
+      <div class="prob"><div class="n">01</div><h3>Немає єдиної картини продажів</h3><p>Дані в ERP, Excel, CRM та у дистриб'юторів живуть окремо.</p></div>
+      <div class="prob"><div class="n">02</div><h3>Складно контролювати дистрибуцію</h3><p>Незрозуміло, де товар продається, де OOS, а де втрачається покриття.</p></div>
+      <div class="prob"><div class="n">03</div><h3>Плани не пов'язані з фактом</h3><p>Команди бачать результат запізно, коли вплинути вже складно.</p></div>
+      <div class="prob"><div class="n">04</div><h3>Промо важко контролювати</h3><p>Акції погоджуються вручну, бюджети розмиваються, факт непрозорий.</p></div>
+      <div class="prob"><div class="n">05</div><h3>Менеджмент збирає таблиці</h3><p>Замість аналізу причин команда витрачає час на збір даних.</p></div>
+      <div class="prob"><div class="n">06</div><h3>Немає прозорої мотивації</h3><p>KPI рахуються складно, із затримкою або вручну.</p></div>
+    </div>
   </div>
 </section>
 
@@ -346,18 +366,30 @@
     <div class="schema">
       <div>
         <div class="col-title">Джерела даних</div>
-        <div class="pills" id="srcPills"></div>
+        <div class="pills">
+          <div class="pill">Дистриб'ютори</div><div class="pill">BAS / 1C</div><div class="pill">ERP</div>
+          <div class="pill">CRM</div><div class="pill">Excel</div><div class="pill">Торгові команди</div>
+          <div class="pill">Мережі / Key Accounts</div>
+        </div>
       </div>
       <div class="flow"><span class="dot"></span></div>
       <div class="platform-box">
         <h3>Business Analytics Platform</h3>
         <div class="sub">інтеграція · якість даних · OLAP / DWH · BI</div>
-        <div class="pmods" id="pmods"></div>
+        <div class="pmods">
+          <div class="pmod">Data Integration</div><div class="pmod">Data Quality</div>
+          <div class="pmod">OLAP / DWH</div><div class="pmod">Power BI</div>
+          <div class="pmod">Planning &amp; Workflow</div><div class="pmod">Mobile / Web</div>
+        </div>
       </div>
       <div class="flow"><span class="dot"></span></div>
       <div>
         <div class="col-title">Результати</div>
-        <div class="pills" id="resPills"></div>
+        <div class="pills">
+          <div class="pill">Продажі та плани</div><div class="pill">Дистрибуція</div><div class="pill">Дебіторка</div>
+          <div class="pill">Маржинальність</div><div class="pill">Промо</div><div class="pill">Storecheck</div>
+          <div class="pill">KPI команди</div><div class="pill">Рекомендовані замовлення</div>
+        </div>
       </div>
     </div>
   </div>
@@ -368,46 +400,58 @@
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Екосистема продуктів</span>
-      <h2>П'ять модулів однієї платформи</h2>
-      <p>Кожен модуль працює самостійно та посилюється даними інших — від складу дистриб'ютора до полиці в торговій точці.</p>
+      <h2>Шість модулів однієї платформи</h2>
+      <p>Кожен модуль працює самостійно та посилюється даними інших — від планування до полиці в торговій точці.</p>
     </div>
     <div class="eco">
-      <svg viewBox="0 0 760 380" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
+      <svg viewBox="0 0 760 390" xmlns="http://www.w3.org/2000/svg" font-family="Inter">
         <g stroke="#cfe6d4" stroke-width="2">
-          <line x1="380" y1="190" x2="380" y2="58"/>
-          <line x1="380" y1="190" x2="521" y2="135"/>
-          <line x1="380" y1="190" x2="467" y2="300"/>
-          <line x1="380" y1="190" x2="293" y2="300"/>
-          <line x1="380" y1="190" x2="239" y2="135"/>
+          <line x1="380" y1="195" x2="380" y2="47"/>
+          <line x1="380" y1="195" x2="508" y2="121"/>
+          <line x1="380" y1="195" x2="508" y2="269"/>
+          <line x1="380" y1="195" x2="380" y2="343"/>
+          <line x1="380" y1="195" x2="252" y2="269"/>
+          <line x1="380" y1="195" x2="252" y2="121"/>
         </g>
         <g>
-          <circle cx="380" cy="58" r="46" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
-          <text x="380" y="54" text-anchor="middle" font-size="16" font-weight="700" fill="#175f2d">DMS</text>
-          <text x="380" y="70" text-anchor="middle" font-size="9.5" fill="#43564a">дистрибуція</text>
+          <circle cx="380" cy="47" r="44" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
+          <text x="380" y="43" text-anchor="middle" font-size="16" font-weight="700" fill="#175f2d">DMS</text>
+          <text x="380" y="59" text-anchor="middle" font-size="9.5" fill="#43564a">дистрибуція</text>
 
-          <circle cx="521" cy="135" r="46" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
-          <text x="521" y="131" text-anchor="middle" font-size="16" font-weight="700" fill="#175f2d">BI</text>
-          <text x="521" y="147" text-anchor="middle" font-size="9.5" fill="#43564a">аналітика</text>
+          <circle cx="508" cy="121" r="44" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
+          <text x="508" y="117" text-anchor="middle" font-size="16" font-weight="700" fill="#175f2d">BI</text>
+          <text x="508" y="133" text-anchor="middle" font-size="9.5" fill="#43564a">аналітика</text>
 
-          <circle cx="467" cy="300" r="46" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
-          <text x="467" y="296" text-anchor="middle" font-size="13" font-weight="700" fill="#175f2d">Orders</text>
-          <text x="467" y="312" text-anchor="middle" font-size="9.5" fill="#43564a">замовлення</text>
+          <circle cx="508" cy="269" r="44" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
+          <text x="508" y="265" text-anchor="middle" font-size="11.5" font-weight="700" fill="#175f2d">Orders</text>
+          <text x="508" y="281" text-anchor="middle" font-size="9.5" fill="#43564a">замовлення</text>
 
-          <circle cx="293" cy="300" r="46" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
-          <text x="293" y="296" text-anchor="middle" font-size="11" font-weight="700" fill="#175f2d">Storecheck</text>
-          <text x="293" y="312" text-anchor="middle" font-size="9.5" fill="#43564a">аудит ТТ</text>
+          <circle cx="380" cy="343" r="44" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
+          <text x="380" y="339" text-anchor="middle" font-size="10.5" font-weight="700" fill="#175f2d">Storecheck</text>
+          <text x="380" y="355" text-anchor="middle" font-size="9.5" fill="#43564a">аудит ТТ</text>
 
-          <circle cx="239" cy="135" r="46" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
-          <text x="239" y="131" text-anchor="middle" font-size="16" font-weight="700" fill="#175f2d">TMA</text>
-          <text x="239" y="147" text-anchor="middle" font-size="9.5" fill="#43564a">промо</text>
+          <circle cx="252" cy="269" r="44" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
+          <text x="252" y="265" text-anchor="middle" font-size="16" font-weight="700" fill="#175f2d">TMA</text>
+          <text x="252" y="281" text-anchor="middle" font-size="9.5" fill="#43564a">промо</text>
+
+          <circle cx="252" cy="121" r="44" fill="#e7f5ea" stroke="#2f9e4d" stroke-width="1.5"/>
+          <text x="252" y="117" text-anchor="middle" font-size="11.5" font-weight="700" fill="#175f2d">Planning</text>
+          <text x="252" y="133" text-anchor="middle" font-size="9.5" fill="#43564a">планування</text>
         </g>
-        <circle cx="380" cy="190" r="62" fill="#1f7a3a"/>
-        <text x="380" y="183" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Платформа</text>
-        <text x="380" y="200" text-anchor="middle" font-size="10.5" fill="#cbe8d0">управління</text>
-        <text x="380" y="214" text-anchor="middle" font-size="10.5" fill="#cbe8d0">продажами</text>
+        <circle cx="380" cy="195" r="58" fill="#1f7a3a"/>
+        <text x="380" y="188" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Платформа</text>
+        <text x="380" y="204" text-anchor="middle" font-size="10.5" fill="#cbe8d0">управління</text>
+        <text x="380" y="218" text-anchor="middle" font-size="10.5" fill="#cbe8d0">продажами</text>
       </svg>
     </div>
-    <div class="prod-grid" id="prodGrid"></div>
+    <div class="prod-grid">
+      <div class="prod"><span class="tag">01</span><div class="ic">DMS</div><h3>Контроль дистрибуції через дистриб'юторів</h3><div class="desc">Щоденно збираємо дані дистриб'юторів і будуємо контроль продажів, територій, SKU та команд.</div><div class="caps"><span class="cap">Щоденний збір даних</span><span class="cap">План/факт по територіях</span><span class="cap">Цільова дистрибуція</span><span class="cap">Геокодування бази</span></div></div>
+      <div class="prod"><span class="tag">02</span><div class="ic">BI</div><h3>BI-аналітика для ERP, CRM та фінансів</h3><div class="desc">Дані з ERP, CRM, BAS/1C та Excel — у зрозумілих управлінських дашбордах.</div><div class="caps"><span class="cap">Продажі план/факт</span><span class="cap">Дебіторка</span><span class="cap">Маржинальність і P&amp;L</span><span class="cap">OLAP + Power BI</span></div></div>
+      <div class="prod"><span class="tag">03</span><div class="ic">PLN</div><h3>Планування продажів</h3><div class="desc">Стратегічне й тактичне планування обсягів за територіями, командами та SKU — основа для контролю план/факт.</div><div class="caps"><span class="cap">Стратегічні плани</span><span class="cap">Тактичні плани</span><span class="cap">Декомпозиція по командах</span><span class="cap">План/факт онлайн</span></div></div>
+      <div class="prod"><span class="tag">04</span><div class="ic">DOS</div><h3>Рекомендовані замовлення дистриб'юторів</h3><div class="desc">Аналізуємо продажі, залишки та плани й формуємо рекомендовані замовлення.</div><div class="caps"><span class="cap">Рекомендовані замовлення</span><span class="cap">Контроль service level</span><span class="cap">Запобігання OOS</span><span class="cap">Просування новинок</span></div></div>
+      <div class="prod"><span class="tag">05</span><div class="ic">SC</div><h3>Storecheck: контроль присутності в точках</h3><div class="desc">Мобільний аудит торгових точок: полиця, ціни, фото та стандарти викладки.</div><div class="caps"><span class="cap">OOS і прайс-аудит</span><span class="cap">Фейсинги й залишки</span><span class="cap">Планограми</span><span class="cap">Завдання на візит</span></div></div>
+      <div class="prod"><span class="tag">06</span><div class="ic">TMA</div><h3>Планування та контроль промо в мережах</h3><div class="desc">Інструмент для KAM і трейд-маркетингу: промо, бюджет і контроль виконання домовленостей.</div><div class="caps"><span class="cap">Планування акцій</span><span class="cap">Мультиплікатори обсягу</span><span class="cap">Workflow погодження</span><span class="cap">Аналіз ефективності</span></div></div>
+    </div>
   </div>
 </section>
 
@@ -418,7 +462,13 @@
       <span class="eyebrow">Для кого</span>
       <h2>Рішення для тих, хто керує продажами на основі даних</h2>
     </div>
-    <div class="aud-grid" id="audGrid"></div>
+    <div class="aud-grid">
+      <div class="aud"><div class="ic">&#9670;</div><h3>Виробники</h3><p>Контроль дистриб'юторів, точок, залишків, промо та KPI команди.</p></div>
+      <div class="aud"><div class="ic">&#9636;</div><h3>Дистриб'ютори</h3><p>Аналітика продажів, постачальників, команди, маршрутів і дебіторки.</p></div>
+      <div class="aud"><div class="ic">&#9733;</div><h3>Власники бізнесу</h3><p>Єдина картина продажів, прибутковості, ризиків і точок росту.</p></div>
+      <div class="aud"><div class="ic">&#9635;</div><h3>Комерційні директори</h3><p>План/факт, виконання KPI, ефективність каналів і територій.</p></div>
+      <div class="aud"><div class="ic">&#9719;</div><h3>Trade Marketing / KAM</h3><p>Промо, мережі, полиці, планограми та контроль домовленостей.</p></div>
+    </div>
   </div>
 </section>
 
@@ -430,7 +480,13 @@
       <h2>Беремо на себе повний цикл</h2>
       <p>Від інтеграції даних до управлінських рішень — вам не потрібно будувати все самостійно.</p>
     </div>
-    <div class="steps" id="steps"></div>
+    <div class="steps">
+      <div class="step"><h3>Аудит процесів і даних</h3><p>Аналізуємо джерела, канали продажів, KPI та поточні звіти.</p></div>
+      <div class="step"><h3>Інтеграція джерел</h3><p>Підключаємо ERP, BAS/1C, CRM, Excel та дистриб'юторів.</p></div>
+      <div class="step"><h3>Побудова DWH / OLAP / BI</h3><p>Очищаємо, структуруємо та збагачуємо дані для аналізу.</p></div>
+      <div class="step"><h3>Запуск продуктів</h3><p>Налаштовуємо DMS, BI, Planning, Storecheck, TMA чи Orders.</p></div>
+      <div class="step"><h3>Супровід і розвиток</h3><p>Щомісяця додаємо звіти, KPI, автоматизації та інсайти.</p></div>
+    </div>
   </div>
 </section>
 
@@ -441,7 +497,14 @@
       <span class="eyebrow">Що отримує бізнес</span>
       <h2>Прозора система управління продажами</h2>
     </div>
-    <div class="res-grid" id="resGrid"></div>
+    <div class="res-grid">
+      <div class="res"><div class="tick">&#10003;</div><h3>Єдина версія правди</h3><p>Усі продажі, плани, залишки, промо та KPI в одній системі.</p></div>
+      <div class="res"><div class="tick">&#10003;</div><h3>Швидші рішення</h3><p>Менеджмент бачить відхилення одразу, а не після ручних звітів.</p></div>
+      <div class="res"><div class="tick">&#10003;</div><h3>Контроль дистрибуції</h3><p>Видно, де товар продається, де втрачається покриття, де OOS.</p></div>
+      <div class="res"><div class="tick">&#10003;</div><h3>Ефективніша команда</h3><p>KPI, маршрути, точки та виконання планів — прозоро.</p></div>
+      <div class="res"><div class="tick">&#10003;</div><h3>Керовані промо</h3><p>Акції плануються, погоджуються та аналізуються в єдиному процесі.</p></div>
+      <div class="res"><div class="tick">&#10003;</div><h3>Менше Excel-залежності</h3><p>Рутина автоматизується, команда фокусується на рішеннях.</p></div>
+    </div>
   </div>
 </section>
 
@@ -495,11 +558,12 @@
     <div class="foot-grid">
       <div>
         <div class="logo"><div class="logo-mark">ba</div><div class="logo-txt">бізнес<span>аналітика</span></div></div>
-        <p class="foot-tag">FMCG Sales Management Platform: BI, DMS, Storecheck, TMA та автоматизація замовлень в єдиній системі управління продажами.</p>
+        <p class="foot-tag">FMCG Sales Management Platform: BI, DMS, Planning, Storecheck, TMA та автоматизація замовлень в єдиній системі управління продажами.</p>
       </div>
       <div><h5>Продукти</h5><ul>
         <li><a href="#products">DMS</a></li><li><a href="#products">BI-аналітика</a></li>
-        <li><a href="#products">Distributor Orders</a></li><li><a href="#products">Storecheck</a></li><li><a href="#products">TMA</a></li>
+        <li><a href="#products">Планування</a></li><li><a href="#products">Distributor Orders</a></li>
+        <li><a href="#products">Storecheck</a></li><li><a href="#products">TMA</a></li>
       </ul></div>
       <div><h5>Компанія</h5><ul>
         <li><a href="#platform">Платформа</a></li><li><a href="#how">Як це працює</a></li>
@@ -509,10 +573,15 @@
         <li><a href="mailto:info@bi-serv.com">info@bi-serv.com</a></li><li>bi-serv.com</li><li>Україна · Казахстан</li>
       </ul></div>
     </div>
-    <div class="foot-bottom"><span>© 2026 бізнес аналітика. Усі права захищені.</span><span>Прототип головної сторінки</span></div>
+    <div class="foot-bottom"><span>&copy; 2026 бізнес аналітика. Усі права захищені.</span><span>Прототип головної сторінки</span></div>
   </div>
 </footer>
 
+<div id="editbar" class="collapsed">
+  <button class="eb-edit" id="btnEdit">&#9998; Редагувати</button>
+  <button class="eb-2" id="btnExport">&#11015; Зберегти у файл</button>
+  <button class="eb-3" id="btnReset">&#8634; Скинути</button>
+</div>
 <script>
 const hdr=document.getElementById('hdr');
 addEventListener('scroll',()=>hdr.classList.toggle('scrolled',scrollY>20));
@@ -557,67 +626,87 @@ document.getElementById('mgrs').innerHTML=mgrs.map((m,i)=>`<div class="mgr"><spa
 const rows=[['Коваленко Дмитро','2 375 412','2 078 331','87.5%','30 127'],['↳ Схід','7 924','10 231','129.1%','8'],['↳ Захід','900 115','782 441','86.9%','9 623'],['↳ Північ','912 768','815 824','89.4%','9 761'],['Гнатюк Роман','300 115','286 902','95.6%','2 511'],['Романенко Ігор','227 415','196 002','85.8%','1 481']];
 document.getElementById('detail').innerHTML=`<table style="width:100%;border-collapse:collapse"><tr style="color:#9aa89e;text-align:left"><th style="font-weight:500;padding:4px 0">Менеджер</th><th style="font-weight:500;text-align:right">План ₴</th><th style="font-weight:500;text-align:right">Продажі ₴</th><th style="font-weight:500;text-align:right">Викон.</th><th style="font-weight:500;text-align:right">ТТ</th></tr>${rows.map(r=>`<tr style="border-top:1px solid #f0f5f1"><td style="padding:5px 0;color:#43564a">${r[0]}</td><td style="text-align:right;color:#43564a">${r[1]}</td><td style="text-align:right;color:#43564a">${r[2]}</td><td style="text-align:right;font-weight:600;color:${parseFloat(r[3])>=90?'#2f9e4d':'#e09a3a'}">${r[3]}</td><td style="text-align:right;color:#43564a">${r[4]}</td></tr>`).join('')}</table>`;
 
-/* problems */
-const probs=[
-  ['Немає єдиної картини продажів','Дані в ERP, Excel, CRM та у дистриб\'юторів живуть окремо.'],
-  ['Складно контролювати дистрибуцію','Незрозуміло, де товар продається, де OOS, а де втрачається покриття.'],
-  ['Плани не пов\'язані з фактом','Команди бачать результат запізно, коли вплинути вже складно.'],
-  ['Промо важко контролювати','Акції погоджуються вручну, бюджети розмиваються, факт непрозорий.'],
-  ['Менеджмент збирає таблиці','Замість аналізу причин команда витрачає час на збір даних.'],
-  ['Немає прозорої мотивації','KPI рахуються складно, із затримкою або вручну.'],
-];
-document.getElementById('probGrid').innerHTML=probs.map((p,i)=>`<div class="prob"><div class="n">0${i+1}</div><h3>${p[0]}</h3><p>${p[1]}</p></div>`).join('');
-
-/* platform schema */
-const sources=['Дистриб\'ютори','BAS / 1C','ERP','CRM','Excel','Торгові команди','Мережі / Key Accounts'];
-const results=['Продажі та плани','Дистрибуція','Дебіторка','Маржинальність','Промо','Storecheck','KPI команди','Рекомендовані замовлення'];
-const pmods=['Data Integration','Data Quality','OLAP / DWH','Power BI','Planning & Workflow','Mobile / Web'];
-document.getElementById('srcPills').innerHTML=sources.map(s=>`<div class="pill">${s}</div>`).join('');
-document.getElementById('resPills').innerHTML=results.map(s=>`<div class="pill">${s}</div>`).join('');
-document.getElementById('pmods').innerHTML=pmods.map(s=>`<div class="pmod">${s}</div>`).join('');
-
-/* products */
-const products=[
-  ['01','DMS','Контроль дистрибуції через дистриб\'юторів','Щоденно збираємо дані дистриб\'юторів і будуємо контроль продажів, територій, SKU та команд.',['Щоденний збір даних','План/факт по територіях','Цільова дистрибуція','Геокодування бази']],
-  ['02','BI','BI-аналітика для ERP, CRM та фінансів','Дані з ERP, CRM, BAS/1C та Excel — у зрозумілих управлінських дашбордах.',['Продажі план/факт','Дебіторка','Маржинальність і P&L','OLAP + Power BI']],
-  ['03','DOS','Рекомендовані замовлення дистриб\'юторів','Аналізуємо продажі, залишки та плани й формуємо рекомендовані замовлення.',['Рекомендовані замовлення','Контроль service level','Запобігання OOS','Просування новинок']],
-  ['04','SC','Storecheck: контроль присутності в точках','Мобільний аудит торгових точок: полиця, ціни, фото та стандарти викладки.',['OOS і прайс-аудит','Фейсинги й залишки','Планограми','Завдання на візит']],
-  ['05','TMA','Планування та контроль промо в мережах','Інструмент для KAM і трейд-маркетингу: промо, бюджет і контроль виконання домовленостей.',['Планування акцій','Мультиплікатори обсягу','Workflow погодження','Аналіз ефективності']],
-];
-document.getElementById('prodGrid').innerHTML=products.map(p=>`<div class="prod"><span class="tag">${p[0]}</span><div class="ic">${p[1]}</div><h3>${p[2]}</h3><div class="desc">${p[3]}</div><div class="caps">${p[4].map(c=>`<span class="cap">${c}</span>`).join('')}</div></div>`).join('');
-
-/* audience */
-const aud=[
-  ['◆','Виробники','Контроль дистриб\'юторів, точок, залишків, промо та KPI команди.'],
-  ['▤','Дистриб\'ютори','Аналітика продажів, постачальників, команди, маршрутів і дебіторки.'],
-  ['★','Власники бізнесу','Єдина картина продажів, прибутковості, ризиків і точок росту.'],
-  ['▣','Комерційні директори','План/факт, виконання KPI, ефективність каналів і територій.'],
-  ['◷','Trade Marketing / KAM','Промо, мережі, полиці, планограми та контроль домовленостей.'],
-];
-document.getElementById('audGrid').innerHTML=aud.map(a=>`<div class="aud"><div class="ic">${a[0]}</div><h3>${a[1]}</h3><p>${a[2]}</p></div>`).join('');
-
-/* steps */
-const steps=[
-  ['Аудит процесів і даних','Аналізуємо джерела, канали продажів, KPI та поточні звіти.'],
-  ['Інтеграція джерел','Підключаємо ERP, BAS/1C, CRM, Excel та дистриб\'юторів.'],
-  ['Побудова DWH / OLAP / BI','Очищаємо, структуруємо та збагачуємо дані для аналізу.'],
-  ['Запуск продуктів','Налаштовуємо DMS, BI, Storecheck, TMA чи Order System.'],
-  ['Супровід і розвиток','Щомісяця додаємо звіти, KPI, автоматизації та інсайти.'],
-];
-document.getElementById('steps').innerHTML=steps.map(s=>`<div class="step"><h3>${s[0]}</h3><p>${s[1]}</p></div>`).join('');
-
-/* results */
-const res=[
-  ['Єдина версія правди','Усі продажі, плани, залишки, промо та KPI в одній системі.'],
-  ['Швидші рішення','Менеджмент бачить відхилення одразу, а не після ручних звітів.'],
-  ['Контроль дистрибуції','Видно, де товар продається, де втрачається покриття, де OOS.'],
-  ['Ефективніша команда','KPI, маршрути, точки та виконання планів — прозоро.'],
-  ['Керовані промо','Акції плануються, погоджуються та аналізуються в єдиному процесі.'],
-  ['Менше Excel-залежності','Рутина автоматизується, команда фокусується на рішеннях.'],
-];
-document.getElementById('resGrid').innerHTML=res.map(r=>`<div class="res"><div class="tick">✓</div><h3>${r[0]}</h3><p>${r[1]}</p></div>`).join('');
-
 document.getElementById('submitBtn').addEventListener('click',()=>{document.getElementById('thanks').style.display='block';});
+
+/* =========================================================
+   INLINE EDITING + localStorage autosave + export to file
+   Tested on a static host (e.g. GitHub Pages).
+   ========================================================= */
+(function(){
+  const SKEY='bi-serv-edits-v1';
+  const SELECTORS=[
+    '.hero .eyebrow','.hero h1','.hero p','.hero-cta .btn',
+    '.strip p',
+    '.sec-head .eyebrow','.sec-head h2','.sec-head p',
+    '.prob h3','.prob p',
+    '.col-title','.pill','.platform-box h3','.platform-box .sub','.pmod',
+    '.prod .tag','.prod h3','.prod .desc','.cap',
+    '.aud h3','.aud p',
+    '.step h3','.step p',
+    '.res h3','.res p',
+    '.exp h2','.exp p','.stat .l',
+    '.cta-left h2','.cta-left p','.cta-btns .btn',
+    'footer .foot-tag','footer h5','footer ul a'
+  ];
+  SELECTORS.forEach(sel=>{
+    const key=sel.replace(/[^a-z0-9]+/gi,'_');
+    document.querySelectorAll(sel).forEach((el,i)=>{
+      if(!el.dataset.editId) el.dataset.editId = key+'__'+i;
+    });
+  });
+  const editables=[...document.querySelectorAll('[data-edit-id]')];
+
+  // restore saved text (only matters in the same browser; baked HTML is the cross-machine source)
+  let store={};
+  try{ store=JSON.parse(localStorage.getItem(SKEY)||'{}'); }catch(e){}
+  editables.forEach(el=>{ const v=store[el.dataset.editId]; if(typeof v==='string') el.innerHTML=v; });
+
+  function save(){
+    const data={};
+    editables.forEach(el=>{ data[el.dataset.editId]=el.innerHTML; });
+    try{ localStorage.setItem(SKEY, JSON.stringify(data)); }catch(e){}
+  }
+
+  let editing=false;
+  const bar=document.getElementById('editbar');
+  const btnEdit=document.getElementById('btnEdit');
+  function setEditing(on){
+    editing=on;
+    editables.forEach(el=>{ el.contentEditable=on?'true':'false'; el.classList.toggle('is-editing',on); });
+    document.body.classList.toggle('edit-mode',on);
+    bar.classList.toggle('collapsed',!on);
+    btnEdit.innerHTML = on?'&#10003; Готово':'&#9998; Редагувати';
+  }
+  editables.forEach(el=>{ el.addEventListener('input',()=>{ if(editing) save(); }); });
+  // don't follow links while editing
+  document.addEventListener('click',e=>{
+    if(editing){ const a=e.target.closest('a[data-edit-id]'); if(a) e.preventDefault(); }
+  },true);
+
+  btnEdit.addEventListener('click',()=>setEditing(!editing));
+
+  document.getElementById('btnExport').addEventListener('click',()=>{
+    const was=editing; if(was) setEditing(false);
+    const clone=document.documentElement.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(n=>n.removeAttribute('contenteditable'));
+    clone.querySelectorAll('.is-editing').forEach(n=>n.classList.remove('is-editing'));
+    const ebar=clone.querySelector('#editbar'); if(ebar) ebar.classList.add('collapsed');
+    const html='<!DOCTYPE html>\n'+clone.outerHTML;
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download='index.html';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    if(was) setEditing(true);
+  });
+
+  document.getElementById('btnReset').addEventListener('click',()=>{
+    if(confirm('Скинути всі правки тексту в цьому браузері?')){
+      try{ localStorage.removeItem(SKEY); }catch(e){}
+      location.reload();
+    }
+  });
+})();
 </script>
 </body>
 </html>
